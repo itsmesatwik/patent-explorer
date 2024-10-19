@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -12,6 +10,7 @@
 # next.js
 /.next/
 /out/
+/.swc
 
 # production
 /build
@@ -34,3 +33,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# linting
+.eslintcache
+
+# turbo repo
+.turbo
+
+# Tailwind
+.cache
