@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import ClaimsTable from '../../components/ClaimsTable'; // Adjust the import path if needed
 import DescriptionView from '../../components/DescriptionView'; // Adjust the import path if needed
 import { useEffect, useState } from 'react';
+import { SessionProvider } from 'next-auth/react';
 
 export default function PatentPage() {
     const [patent, setPatent] = useState(null);
@@ -30,7 +31,9 @@ export default function PatentPage() {
                 <p><strong>Country:</strong> {patent.country_code}</p>
                 <p><strong>Publication Date:</strong> {new Date(patent.publication_date).toLocaleDateString()}</p>
             </div>
-            <ClaimsTable claimsXml={patent.claims_xml} />
+            <SessionProvider>
+                <ClaimsTable patentId={patent.id} claimsXml={patent.claims_xml} />
+            </SessionProvider>
             <DescriptionView descriptionXml={patent.description_xml} />
         </div>
     );

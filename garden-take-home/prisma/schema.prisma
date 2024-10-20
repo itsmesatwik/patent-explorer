@@ -8,25 +8,37 @@ datasource db {
 }
 
 model patents {
-  id               String    @id
-  country_code     String    @db.Char(2)
-  kind_code        String    @db.Char(2)
+  id               String           @id
+  country_code     String           @db.Char(2)
+  kind_code        String           @db.Char(2)
   title            String?
   abstract         String?
   claims           String?
   claims_xml       String?
   description      String?
   description_xml  String?
-  publication_date DateTime? @db.Timestamptz(6)
-  filing_date      DateTime? @db.Timestamptz(6)
-  grant_date       DateTime? @db.Timestamptz(6)
-  priority_date    DateTime? @db.Timestamptz(6)
+  publication_date DateTime?        @db.Timestamptz(6)
+  filing_date      DateTime?        @db.Timestamptz(6)
+  grant_date       DateTime?        @db.Timestamptz(6)
+  priority_date    DateTime?        @db.Timestamptz(6)
   inventors        String[]
   assignees        String[]
+  claimSelections  ClaimSelection[] @relation("PatentSelections")
 }
 
 model User {
-  id       String @id @default(cuid())
-  email    String @unique
-  password String
+  id              String           @id @default(cuid())
+  email           String           @unique
+  password        String
+  claimSelections ClaimSelection[] @relation("UserSelections")
+}
+
+model ClaimSelection {
+  id        String   @id @default(cuid())
+  userId    String
+  patentId  String
+  claimIds  Json
+  createdAt DateTime @default(now())
+  patent    patents  @relation("PatentSelections", fields: [patentId], references: [id])
+  user      User     @relation("UserSelections", fields: [userId], references: [id])
 }
