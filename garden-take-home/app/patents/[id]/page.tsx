@@ -1,8 +1,8 @@
-'use client'; // Add this at the top to make the component a Client Component
+'use client';
 
 import { useParams } from 'next/navigation';
-import ClaimsTable from '../../components/ClaimsTable'; // Adjust the import path if needed
-import DescriptionView from '../../components/DescriptionView'; // Adjust the import path if needed
+import ClaimsTable from '../../components/ClaimsTable';
+import DescriptionView from '../../components/DescriptionView';
 import { useEffect, useState } from 'react';
 import { SessionProvider } from 'next-auth/react';
 

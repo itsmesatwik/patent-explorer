@@ -77,11 +77,13 @@ export default function ClaimsTable({ patentId, claimsXml }: { patentId: string;
 
         if (response.ok) {
             alert('Selection saved successfully!');
+            // Redirect to the new page for viewing selections
+            window.location.href = `/patents/${patentId}/selections`;
         } else {
-            console.log(response)
             alert('Failed to save selection.');
         }
     };
+
 
 
     return (
