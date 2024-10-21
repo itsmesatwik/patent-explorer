@@ -28,19 +28,24 @@ export default function PatentTable({ patents, totalPatents, currentPage, itemsP
 
     return (
         <>
-            <div className="mb-4">
+            <div className="mb-6">
                 <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search by title..."
-                    className="border p-2 rounded w-full"
+                    className="border border-green-300 p-3 rounded-lg w-full focus:outline-none focus:border-green-500"
                 />
-                <button onClick={handleSearch} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Search</button>
+                <button
+                    onClick={handleSearch}
+                    className="mt-3 px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                >
+                    Search
+                </button>
             </div>
-            <div className="overflow-x-auto shadow-md sm:rounded-lg">
-                <table className="w-full text-sm text-left text-zinc-500 dark:text-zinc-400">
-                    <thead className="text-xs text-zinc-700 uppercase bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400">
+            <div className="overflow-x-auto shadow-lg sm:rounded-lg">
+                <table className="w-full text-sm text-left text-green-900">
+                    <thead className="text-xs uppercase bg-green-100 text-green-800">
                         <tr>
                             <th scope="col" className="px-6 py-3">Title</th>
                             <th scope="col" className="px-6 py-3">ID</th>
@@ -50,10 +55,12 @@ export default function PatentTable({ patents, totalPatents, currentPage, itemsP
                     </thead>
                     <tbody>
                         {patents.map((patent) => (
-                            <tr key={patent.id}
-                                className="bg-white border-b dark:bg-zinc-800 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-600 cursor-pointer"
-                                onClick={() => router.push(`/patents/${patent.id}`)}>
-                                <td className="px-6 py-4 font-medium text-zinc-900 whitespace-nowrap dark:text-white">{patent.title || 'Untitled'}</td>
+                            <tr
+                                key={patent.id}
+                                className="bg-white border-b hover:bg-green-50 cursor-pointer"
+                                onClick={() => router.push(`/patents/${patent.id}`)}
+                            >
+                                <td className="px-6 py-4 font-medium text-green-900 whitespace-nowrap">{patent.title || 'Untitled'}</td>
                                 <td className="px-6 py-4">{patent.id}</td>
                                 <td className="px-6 py-4">{patent.country_code}</td>
                                 <td className="px-6 py-4">{formatDate(patent.publication_date)}</td>
@@ -62,21 +69,21 @@ export default function PatentTable({ patents, totalPatents, currentPage, itemsP
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex justify-between items-center mt-6">
                 <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage <= 1}
-                    className="px-4 py-2 bg-zinc-300 text-zinc-700 rounded disabled:opacity-50"
+                    className="px-5 py-2 bg-green-200 text-green-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-300 transition-colors duration-200"
                 >
                     Previous
                 </button>
-                <span>
+                <span className="text-green-800">
                     Page {currentPage} of {totalPages}
                 </span>
                 <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage >= totalPages}
-                    className="px-4 py-2 bg-zinc-300 text-zinc-700 rounded disabled:opacity-50"
+                    className="px-5 py-2 bg-green-200 text-green-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-300 transition-colors duration-200"
                 >
                     Next
                 </button>

@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import ClaimsTable from '../../components/ClaimsTable';
 import DescriptionView from '../../components/DescriptionView';
+import Navbar from '@/app/components/Navbar';
 import { useEffect, useState } from 'react';
 import { SessionProvider } from 'next-auth/react';
 
@@ -12,7 +13,6 @@ export default function PatentPage() {
 
     useEffect(() => {
         if (id) {
-            // Fetch patent data based on the ID
             fetch(`/api/patents/${id}`)
                 .then(response => response.json())
                 .then(data => setPatent(data))
@@ -20,21 +20,30 @@ export default function PatentPage() {
         }
     }, [id]);
 
-    if (!patent) return <div>Loading...</div>;
+    if (!patent) return <div className="flex justify-center items-center h-screen text-gray-600">Loading...</div>;
 
     return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold mb-4">{patent.title || 'Untitled Patent'}</h1>
-            <div className="mb-6">
-                <h2 className="text-xl font-semibold">Patent Information</h2>
-                <p><strong>ID:</strong> {patent.id}</p>
-                <p><strong>Country:</strong> {patent.country_code}</p>
-                <p><strong>Publication Date:</strong> {new Date(patent.publication_date).toLocaleDateString()}</p>
+        <>
+            <Navbar />
+            <div className="max-w-5xl mx-auto p-6 bg-white shadow rounded-lg mt-8">
+                <h1 className="text-3xl font-bold text-gray-800 mb-6">{patent.title || 'Untitled Patent'}</h1>
+                <div className="mb-8">
+                    <h2 className="text-xl font-semibold text-gray-700 mb-2">Patent Information</h2>
+                    <div className="grid grid-rows-1 sm:grid-rows-2 gap-4 text-gray-600">
+                        <p><strong>ID:</strong> {patent.id}</p>
+                        <p><strong>Country:</strong> {patent.country_code}</p>
+                        <p><strong>Publication Date:</strong> {new Date(patent.publication_date).toLocaleDateString()}</p>
+                    </div>
+                </div>
+
+                <SessionProvider>
+                    <div className="mb-8">
+                        <ClaimsTable patentId={patent.id} claimsXml={patent.claims_xml} />
+                    </div>
+                </SessionProvider>
+
+                <DescriptionView descriptionXml={patent.description_xml} />
             </div>
-            <SessionProvider>
-                <ClaimsTable patentId={patent.id} claimsXml={patent.claims_xml} />
-            </SessionProvider>
-            <DescriptionView descriptionXml={patent.description_xml} />
-        </div>
+        </>
     );
 }

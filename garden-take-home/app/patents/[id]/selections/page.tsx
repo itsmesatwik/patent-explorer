@@ -3,6 +3,7 @@
 import { SessionProvider } from 'next-auth/react';
 import SelectionsTable from '../../../components/SelectionsTable'; // Adjust the import path if necessary
 import { useParams } from 'next/navigation';
+import Navbar from '@/app/components/Navbar';
 
 export default function SelectionsPage() {
     const params = useParams();
@@ -13,8 +14,11 @@ export default function SelectionsPage() {
     }
 
     return (
-        <SessionProvider>
-            <SelectionsTable patentId={patentId} />
-        </SessionProvider>
+        <>
+            <Navbar />
+            <SessionProvider>
+                <SelectionsTable patentId={patentId} />
+            </SessionProvider>
+        </>
     );
 }

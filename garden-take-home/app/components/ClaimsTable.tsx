@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface Claim {
@@ -32,14 +32,12 @@ export default function ClaimsTable({ patentId, claimsXml }: { patentId: string;
     const claims = parseClaimsXml(claimsXml);
     const userEmail = session?.user?.email;
 
-    // Toggle claim selection
     const handleToggleClaim = (claim: Claim) => {
         const newSelectedClaims = new Set(selectedClaims);
         if (newSelectedClaims.has(claim.id)) {
             newSelectedClaims.delete(claim.id);
         } else {
             newSelectedClaims.add(claim.id);
-            // Ensure parent claims are selected
             let currentClaim = claim;
             while (currentClaim.parentId) {
                 const parent = claims.find(c => c.id === currentClaim.parentId);
@@ -58,7 +56,6 @@ export default function ClaimsTable({ patentId, claimsXml }: { patentId: string;
         setSelectedClaim(claim);
     };
 
-    // Save selected claims to history (mock implementation)
     const handleSaveSelection = async () => {
         if (!userEmail) {
             alert('You need to be logged in to save selections.');
@@ -77,56 +74,54 @@ export default function ClaimsTable({ patentId, claimsXml }: { patentId: string;
 
         if (response.ok) {
             alert('Selection saved successfully!');
-            // Redirect to the new page for viewing selections
             window.location.href = `/patents/${patentId}/selections`;
         } else {
             alert('Failed to save selection.');
         }
     };
 
-
-
     return (
-        <div className="mt-6">
-            <h2 className="text-xl font-semibold">Claims</h2>
-            <table className="w-full mt-2 border-collapse border border-gray-300">
-                <thead className="text-xs text-zinc-700 uppercase bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400">
-                    <tr>
-                        <th className="border border-zinc-300 p-2">Select</th>
-                        <th className="border border-zinc-300 p-2">Claim Number</th>
-                        <th className="border border-zinc-300 p-2">Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {claims.map((claim) => (
-                        <tr
-                            key={claim.id}
-                            onClick={() => handleRowClick(claim)}
-                            className="bg-white border-b dark:bg-zinc-800 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-600 cursor-pointer"
-                        >
-                            <td className="border border-zinc-300 p-2 dark:text-white">
-                                <input
-                                    type="checkbox"
-                                    checked={isClaimSelected(claim)}
-                                    onChange={() => handleToggleClaim(claim)}
-                                    onClick={(e) => e.stopPropagation()}
-                                />
-                            </td>
-                            <td className="border border-zinc-300 p-2 dark:text-white">{claim.num}</td>
-                            <td className="border border-zinc-300 p-2 dark:text-white">
-                                {claim.text ? claim.text.slice(0, 100) : 'No description available'}...
-                            </td>
+        <div className="mt-8 p-6 bg-gray-50 shadow-lg rounded-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Claims</h2>
+            <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                    <thead className="bg-gray-100 text-sm font-semibold text-gray-600 uppercase">
+                        <tr>
+                            <th className="p-3">Select</th>
+                            <th className="p-3">Claim Number</th>
+                            <th className="p-3">Description</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {claims.map((claim) => (
+                            <tr
+                                key={claim.id}
+                                onClick={() => handleRowClick(claim)}
+                                className={`cursor-pointer transition-colors hover:bg-gray-50 ${isClaimSelected(claim) ? 'bg-gray-50' : 'bg-white'}`}
+                            >
+                                <td className="p-3">
+                                    <input
+                                        type="checkbox"
+                                        checked={isClaimSelected(claim)}
+                                        onChange={() => handleToggleClaim(claim)}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="cursor-pointer"
+                                    />
+                                </td>
+                                <td className="p-3 text-gray-700">{claim.num}</td>
+                                <td className="p-3 text-gray-600">{claim.text ? claim.text.slice(0, 100) : 'No description available'}...</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {selectedClaim && (
-                <div className="mt-4 p-4 border border-zinc-300 rounded">
-                    <h3 className="text-lg font-semibold">Claim {selectedClaim.num} Details</h3>
-                    <p>{selectedClaim.text || 'No description available'}</p>
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-inner">
+                    <h3 className="text-lg font-semibold text-gray-700">Claim {selectedClaim.num} Details</h3>
+                    <p className="mt-2 text-gray-600">{selectedClaim.text || 'No description available'}</p>
                     <button
-                        className="mt-2 text-blue-500 hover:underline"
+                        className="mt-4 text-blue-500 hover:underline"
                         onClick={() => setSelectedClaim(null)}
                     >
                         Close
@@ -136,7 +131,7 @@ export default function ClaimsTable({ patentId, claimsXml }: { patentId: string;
 
             <button
                 onClick={handleSaveSelection}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="mt-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 disabled:opacity-50"
                 disabled={selectedClaims.size === 0}
             >
                 Save Selection

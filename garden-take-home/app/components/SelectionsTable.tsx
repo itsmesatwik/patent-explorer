@@ -22,7 +22,6 @@ interface Patent {
     claimsXml: string;
 }
 
-// Function to parse claims XML (copied from ClaimsTable.tsx)
 const parseClaimsXml = (xml: string): Claim[] => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/xml');
@@ -55,7 +54,6 @@ export default function SelectionsTable({ patentId }: { patentId: string }) {
                 const data = await response.json();
                 setPatent(data.patent);
                 setSelections(data.selections);
-                // Parse the claims XML to get the list of claims
                 const parsedClaims = parseClaimsXml(data.patent.claims_xml);
                 setClaims(parsedClaims);
             }
@@ -64,61 +62,60 @@ export default function SelectionsTable({ patentId }: { patentId: string }) {
     }, [session, patentId]);
 
     const handleSelectionClick = (selection: ClaimSelection) => {
-        // Filter the parsed claims to show only the ones in the current selection
         const selected = claims.filter(claim => selection.claimIds.includes(claim.id));
         setSelectedClaims(selected);
     };
 
-    if (!patent) return <p>Loading...</p>;
+    if (!patent) return <p className="text-center mt-8">Loading...</p>;
 
     return (
-        <div className="mt-6 p-8">
-            <h1 className="text-2xl font-bold mb-4">{patent.title || 'Untitled Patent'}</h1>
+        <div className="max-w-5xl mx-auto p-6 bg-white shadow rounded-lg">
+            <h1 className="text-3xl font-bold mb-6 text-gray-800">{patent.title || 'Untitled Patent'}</h1>
             <div className="mb-6">
-                <h2 className="text-xl font-semibold">Patent Information</h2>
-                <p><strong>ID:</strong> {patent.id}</p>
-                <p><strong>Country:</strong> {patent.country_code}</p>
-                <p><strong>Publication Date:</strong> {new Date(patent.publication_date).toLocaleDateString()}</p>
+                <h2 className="text-xl font-semibold text-gray-700 mb-2">Patent Information</h2>
+                <div className="grid grid-rows-2 gap-4 text-gray-600">
+                    <p><strong>ID:</strong> {patent.id}</p>
+                    <p><strong>Country:</strong> {patent.country_code}</p>
+                    <p><strong>Publication Date:</strong> {new Date(patent.publication_date).toLocaleDateString()}</p>
+                </div>
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold">{session?.user?.email}'s Selected Claims for {patentId}</h3>
+            <h3 className="mt-8 text-2xl font-semibold text-gray-800">Your Selected Claims</h3>
             {selections.length === 0 ? (
-                <p>No selections found.</p>
+                <p className="text-gray-500 mt-4">No selections found.</p>
             ) : (
-                <table className="w-full mt-2 border-collapse border border-gray-300">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr>
-                            <th className="border border-gray-300 p-2">Selection Date</th>
-                            <th className="border border-gray-300 p-2">Claim IDs</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {selections.map((selection) => (
-                            <tr
-                                key={selection.id}
-                                className="bg-white border-b hover:bg-gray-50 cursor-pointer"
-                                onClick={() => handleSelectionClick(selection)}
-                            >
-                                <td className="border border-gray-300 p-2">
-                                    {new Date(selection.createdAt).toLocaleDateString()}
-                                </td>
-                                <td className="border border-gray-300 p-2">
-                                    {Array.isArray(selection.claimIds) ? selection.claimIds.join(', ') : 'No claims selected'}
-                                </td>
+                <div className="overflow-x-auto shadow-lg mt-4">
+                    <table className="w-full text-left border-collapse">
+                        <thead className="text-xs font-semibold text-gray-600 uppercase bg-gray-100">
+                            <tr>
+                                <th className="p-3">Selection Date</th>
+                                <th className="p-3">Claim IDs</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {selections.map((selection) => (
+                                <tr
+                                    key={selection.id}
+                                    className="hover:bg-gray-50 cursor-pointer transition-colors"
+                                    onClick={() => handleSelectionClick(selection)}
+                                >
+                                    <td className="p-3">{new Date(selection.createdAt).toLocaleDateString()}</td>
+                                    <td className="p-3">{selection.claimIds.join(', ')}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             {selectedClaims.length > 0 && (
-                <div className="mt-4">
-                    <h3 className="text-lg font-semibold">Selected Claims Details</h3>
-                    <ul>
+                <div className="mt-8">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Selected Claims Details</h3>
+                    <ul className="space-y-4">
                         {selectedClaims.map(claim => (
-                            <li key={claim.id} className="border-b border-gray-300 py-2">
+                            <li key={claim.id} className="p-4 bg-gray-50 rounded-lg shadow-sm">
                                 <strong>Claim {claim.num}:</strong>
-                                <p>{claim.text || 'No description available'}</p>
+                                <p className="text-gray-600 mt-2">{claim.text || 'No description available'}</p>
                             </li>
                         ))}
                     </ul>
